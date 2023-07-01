@@ -26,12 +26,12 @@
         }
 
         draw() {
-        ctx.globalAlpha = this.alpha;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, 1, 0, Math.PI * 2, false); // Reduced radius to 1
-        ctx.fillStyle = this.color;
-        ctx.fill();
-    }
+            ctx.globalAlpha = this.alpha;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, 2, 0, Math.PI * 2, false);
+            ctx.fillStyle = this.color;
+            ctx.fill();
+        }
 
         update() {
             this.velocity.x *= this.friction;
@@ -44,72 +44,70 @@
 
     class Firework {
         constructor(x, y, color) {
-            this.x = x;
-            this.y = y;
-            this.color = color;
-            this.velocity = {x: 0, y: Math.random() * -3 - 1};
-            this.particles = [];
-            this.lifespan = 100; // Lifespan in frames
-        }
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        this.velocity = {x: 0, y: Math.random() * -2.5 - 0.5};
+        this.particles = [];
+        this.lifespan = 250; 
+        this.hasExploded = false; 
+    }
 
-        draw() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, 3, 0, Math.PI * 2, false);
-            ctx.fillStyle = this.color;
-            ctx.fill();
-        }
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 3, 0, Math.PI * 2, false);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+    }
 
-        explode() {
-        for (let i = 0; i < 20; i++) { // Reduced number of particles to 20
+    explode() {
+        for (let i = 0; i < 50; i++) {
             this.particles.push(new Particle(this.x, this.y, this.color));
         }
-        }
-
-        update() {
-            this.lifespan--;
-
-            if (this.lifespan <= 0) {
-                this.explode();
-                this.velocity = {x: 0, y: 0};
-            } else {
-                this.y += this.velocity.y;
-            }
-
-            for (let i = 0; i < this.particles.length; i++) {
-                this.particles[i].update();
-                this.particles[i].draw();
-            }
-        }
     }
 
-    let fireworks = [];
-    let lastFireworkTime = Date.now();
-let nextFireworkIn = Math.random() * 2000 + 1000; // 1 to 3 seconds in milliseconds
+    update() {
+        this.lifespan--;
 
-    function animate() {
-    requestAnimationFrame(animate);
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    fireworks.forEach((firework, index) => {
-        firework.update();
-        firework.draw();
-
-        if (firework.lifespan <= 0 && firework.particles.every(p => p.alpha <= 0)) {
-            fireworks.splice(index, 1);
+        if (this.lifespan <= 0 && !this.hasExploded) {
+            this.explode();
+            this.velocity = {x: 0, y: 0};
+            this.hasExploded = true;
+        } else if (this.lifespan > 0) {
+            this.y += this.velocity.y;
         }
-    });
 
-    const currentTime = Date.now();
-
-    if (currentTime - lastFireworkTime > nextFireworkIn) {
-        const x = Math.random() * canvas.width;
-        const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
-        fireworks.push(new Firework(x, canvas.height, color));
-        lastFireworkTime = currentTime;
-        nextFireworkIn = Math.random() * 2000 + 1000; // Set next firework time to random between 1 to 3 seconds
+        for (let i = 0; i < this.particles.length; i++) {
+            this.particles[i].update();
+            this.particles[i].draw();
+        }
     }
 }
+
+
+
+    let fireworks = [];
+
+    function animate() {
+        requestAnimationFrame(animate);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        fireworks.forEach((firework, index) => {
+            firework.update();
+            firework.draw();
+
+            if (firework.lifespan <= 0 && firework.particles.every(p => p.alpha <= 0)) {
+                fireworks.splice(index, 1);
+            }
+        });
+
+        if (Math.random() < 0.015) { 
+    const x = Math.random() * canvas.width;
+    const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
+    fireworks.push(new Firework(x, canvas.height, color));
+    }
+    }
 
     animate();
 </script>
