@@ -1,56 +1,64 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fireworks Simulator</title>
-    <style>canvas { display: block; }</style>
+    <style>
+        canvas {
+            display: block;
+        }
+    </style>
 </head>
 <body>
-<canvas id="fireworks"></canvas>
-<script>
-    const canvas = document.getElementById('fireworks');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    <canvas id="fireworks"></canvas>
+    <script>
+        // Our JavaScript will go here
+        const canvas = document.getElementById('fireworks');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-    class Particle {
-        constructor(x, y, color) {
-            this.x = x;
-            this.y = y;
-            this.color = color;
-            this.velocity = {
-                x: (Math.random() - 0.5) * 8,
-                y: (Math.random() - 0.5) * 8
-            };
-            this.alpha = 1;
-            this.friction = 0.99;
-        }
-
-        draw() {
-            ctx.globalAlpha = this.alpha;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, 2, 0, Math.PI * 2, false);
-            ctx.fillStyle = this.color;
-            ctx.fill();
-        }
-
-        update() {
-            this.velocity.x *= this.friction;
-            this.velocity.y *= this.friction;
-            this.x += this.velocity.x;
-            this.y += this.velocity.y;
-            this.alpha -= 0.01;
-        }
+class Particle {
+    constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        this.velocity = {
+            x: (Math.random() - 0.5) * 8,
+            y: (Math.random() - 0.5) * 8
+        };
+        this.alpha = 1;
+        this.friction = 0.99;
     }
 
-    class Firework {
-        constructor(x, y, color) {
+    draw() {
+        ctx.globalAlpha = this.alpha;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 2, 0, Math.PI * 2, false);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+    }
+
+    update() {
+        this.velocity.x *= this.friction;
+        this.velocity.y *= this.friction;
+        this.x += this.velocity.x;
+        this.y += this.velocity.y;
+        this.alpha -= 0.01;
+    }
+}
+
+class Firework {
+    constructor(x, y, color) {
         this.x = x;
         this.y = y;
         this.color = color;
         this.velocity = {x: 0, y: Math.random() * -2.5 - 0.5};
         this.particles = [];
-        this.lifespan = 250; 
-        this.hasExploded = false; 
+        this.lifespan = 180;
+        this.hasExploded = false;
     }
 
     draw() {
@@ -83,10 +91,7 @@
         }
     }
 }
-
-
-
-    let fireworks = [];
+let fireworks = [];
 
     function animate() {
         requestAnimationFrame(animate);
@@ -103,13 +108,14 @@
         });
 
         if (Math.random() < 0.015) { 
-    const x = Math.random() * canvas.width;
-    const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
-    fireworks.push(new Firework(x, canvas.height, color));
+        const x = Math.random() * canvas.width;
+        const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
+        fireworks.push(new Firework(x, canvas.height, color));
     }
-    }
+ }
 
-    animate();
-</script>
+animate();
+
+    </script>
 </body>
 </html>
